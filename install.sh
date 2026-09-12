@@ -1,45 +1,67 @@
 #!/bin/sh
-# Release ビルドを ~/Applications に置いて起動し直す。
+# Release ビルドを /Applications に置いて起動し直す。
 #
 # なぜ Xcode の ⌘R ではなくこれを使うのか:
 #   - Xcode が起動したアプリには get-task-allow（デバッグ可の印）が付く。
 #     アクセシビリティ許可が絡むと挙動が読みにくくなる。
-#   - ad-hoc 署名なので、macOS は「同じアプリか」をバイナリのハッシュで見ている。
-#     置き場所を固定しておけば、許可を与え直す先が毎回同じになる。
+#   - 置き場所を固定しておけば、許可を与える先が毎回同じになる。
+#   - ~/Applications は Finder 上の表示名が /Applications と同じ「アプリケーション」で
+#     見分けがつかない。許可を与えるときに迷うので /Applications に置く。
 set -e
 cd "$(dirname "$0")"
+
+APP=/Applications/LR.app
+BUNDLE_ID=com.finalize.lr
+BUILT=build/Build/Products/Release/LR.app
 
 xcodebuild -project LR.xcodeproj -scheme LR -configuration Release \
   -derivedDataPath build -quiet build
 
+# アクセシビリティの記録を捨てるべきか、入れ替える前に決める。
+#
+# TCC は「このアプリか」を designated requirement で判定する。ここが今までと
+# 変わると、記録は残っているのに一致しなくなり、tccd がこう言う:
+#
+#   Failed to match existing code requirement for subject com.finalize.lr
+#
+# 厄介なのは、**システム設定のスイッチは ON のまま残る**ことだ。許可済みに
+# 見えるのに一切動かない、という一番分かりにくい壊れ方をする。スイッチを
+# 押し直しても入らない。記録を消すしか直し方が無い。
+#
+# requirement が変わる場面は2つある:
+#   - ad-hoc 署名。証明書チェーンが無いので条件が cdhash で書かれ、毎回変わる
+#   - 署名に使う証明書を変えたとき（ad-hoc → 自己署名、別マシンで作り直した等）
+#
+# どちらも「前に入っていたものと requirement が違う」で一度に判定できるので、
+# 署名方式を場合分けせず、新旧を突き合わせる。
+req() { codesign -d -r- "$1" 2>/dev/null | grep '^designated' || true; }
+old_req=$(req "$APP")
+new_req=$(req "$BUILT")
+
 pkill -x LR 2>/dev/null || true
-# ~/Applications は Finder 上の表示名が /Applications と同じ「アプリケーション」で
-# 見分けがつかない。許可を与えるときに迷うので /Applications に置く。
-rm -rf ~/Applications/LR.app
-rm -rf /Applications/LR.app
-cp -R build/Build/Products/Release/LR.app /Applications/LR.app
+rm -rf ~/Applications/LR.app        # 昔ここに置いていた分の掃除
+rm -rf "$APP"
+cp -R "$BUILT" "$APP"
 
-# ad-hoc 署名のときだけ、アクセシビリティの記録を消す。
-#
-# ad-hoc には証明書チェーンが無いので、TCC は許可の条件をバイナリのハッシュで
-# 固定する。再ビルドすると一致しなくなるのに、システム設定のスイッチは ON のまま
-# 残る。「許可済みに見えるのに一切動かない」という一番分かりにくい壊れ方をする。
-# 与え直す手間より、嘘の ON が残る方が高くつくので消してしまう。
-#
-# 証明書（Cert/make-cert.sh）で署名していればこの問題は起きない。条件が
-# ハッシュではなく証明書で書かれるので、何度ビルドしても許可が残る。
-if codesign -dvv /Applications/LR.app 2>&1 | grep -q "Signature=adhoc"; then
-  tccutil reset Accessibility com.finalize.lr >/dev/null 2>&1 || true
-  adhoc=yes
+if [ -n "$old_req" ] && [ "$old_req" != "$new_req" ]; then
+  tccutil reset Accessibility "$BUNDLE_ID" >/dev/null 2>&1 || true
+  regrant=yes
 fi
 
-open /Applications/LR.app
+open "$APP"
 
-echo "起動した: /Applications/LR.app"
-if [ "$adhoc" = yes ]; then
+echo "起動した: $APP"
+if [ "$regrant" = yes ]; then
   echo
-  echo "ad-hoc 署名なので許可の記録を消した。与え直しが必要:"
+  echo "署名の条件が前回と変わったので、許可の記録を消した。与え直しが必要:"
   echo "  ダイアログの「システム設定を開く」→ 一覧の LR をオン"
-  echo "  毎回これをやりたくなければ ./Cert/make-cert.sh"
+  echo
+  echo "  前回: $old_req"
+  echo "  今回: $new_req"
+  case "$new_req" in
+    *cdhash*) echo
+              echo "  cdhash で条件が書かれている = ad-hoc 署名。毎回これが起きる。"
+              echo "  ./Cert/make-cert.sh を一度走らせると起きなくなる。" ;;
+  esac
 fi
-echo "ログ: log show --last 2m --predicate 'subsystem == \"com.finalize.lr\"' --style compact"
+echo "ログ: log show --last 2m --predicate 'subsystem == \"$BUNDLE_ID\"' --style compact"
