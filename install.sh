@@ -14,6 +14,22 @@ APP=/Applications/LR.app
 BUNDLE_ID=com.finalize.lr
 BUILT=build/Build/Products/Release/LR.app
 
+# 署名に使う identity がこの端末に無ければ作る。
+#
+# プロジェクトは CODE_SIGN_IDENTITY = "LR Code Signing" を固定で指定しているので、
+# 無いまま xcodebuild すると原因の分かりにくいエラーで止まる:
+#
+#   error: No certificate matching 'LR Code Signing' found
+#
+# 別の端末にクローンすると必ずここに来る。ただし黙ってやらない。
+# login キーチェーンに物が増えるのを隠すべきではないので、作ったことを言う。
+if ! security find-identity -p codesigning 2>/dev/null | grep -q "LR Code Signing"; then
+  echo "署名用の証明書がこの端末に無いので作る（login キーチェーンに入る）"
+  echo
+  ./Cert/make-cert.sh
+  echo
+fi
+
 xcodebuild -project LR.xcodeproj -scheme LR -configuration Release \
   -derivedDataPath build -quiet build
 

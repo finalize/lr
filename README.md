@@ -16,19 +16,27 @@
 
 ## 動かす
 
+macOS 14 以降と Xcode が要る。
+
 ```sh
+git clone https://github.com/finalize/lr.git
+cd lr
 ./install.sh
 ```
 
-Release ビルドを `/Applications/LR.app` に置いて起動する。**アクセシビリティ許可を
-使うので、Xcode の ⌘R ではなくこちらを使う。** Xcode が起動したアプリには
+Release ビルドを `/Applications/LR.app` に置いて起動する。初回はコード署名用の
+自己署名証明書がこの端末に無いので、`install.sh` が `Cert/make-cert.sh` を呼んで
+作ってからビルドする（login キーチェーンに入る。理由は下の「署名」）。
+
+あとは**アクセシビリティの許可を与えれば使える。** 許可は端末ごと・OS ごとの
+ものなので、別の端末では改めて与えることになる。
+
+**Xcode の ⌘R ではなく `./install.sh` を使う。** Xcode が起動したアプリには
 `get-task-allow`（デバッグ可の印）が付き、置き場所も DerivedData の中で変わりうるため、
-許可を与える先が安定しない。
+許可を与える先が安定しない。コードを読む・直すのは Xcode で、試すのは `./install.sh` で。
 
 `~/Applications` ではなく `/Applications` に置くのは、Finder 上の表示名が
 どちらも「アプリケーション」で、許可を与えるときにどっちを見ているのか分からなくなるから。
-
-コードを読む・直すのは Xcode で（`open LR.xcodeproj`）、試すのは `./install.sh` で。
 
 ## 中で何が起きているか見る
 
