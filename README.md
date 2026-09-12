@@ -107,35 +107,56 @@ tccutil reset Accessibility com.finalize.lr
 許可が下りたかは1秒ごとに見に行っていて、下りたら監視が始まる。通常はアプリの再起動は
 要らないが、切り替わらなければ一度終了して起動し直す。
 
-### 再ビルドすると許可が壊れる（スイッチは ON のまま）
+### 署名 — 再ビルドで許可を壊さないために
 
-Apple Developer にサインインしていないので ad-hoc 署名になっている。ad-hoc には
-証明書チェーンが無いため、TCC は「このアプリか」を**バイナリのハッシュ（cdhash）**で
-固定する。ビルドし直すとハッシュが変わり、記録と一致しなくなる。
-
-**この状態でもシステム設定のスイッチは ON のまま残る。** 画面上は許可済みに見えるのに
-一切動かない、という一番分かりにくい壊れ方をする。本当に効いているかは tccd のログで分かる:
+自己署名の証明書で署名している。**これをやらないと、再ビルドのたびに許可が壊れる。**
 
 ```sh
-log show --last 10m --predicate 'process == "tccd"' --style compact | grep -i lr
+./Cert/make-cert.sh    # 一度だけ。login キーチェーンに入る
+```
+
+ad-hoc 署名（`CODE_SIGN_IDENTITY = "-"`）には証明書チェーンが無いので、TCC は
+許可の条件を**バイナリのハッシュ（cdhash）**で固定する。ビルドし直すとハッシュが
+変わって一致しなくなるのに、**システム設定のスイッチは ON のまま残る**。
+「許可済みに見えるのに一切動かない」という一番分かりにくい壊れ方をする。
+
+証明書で署名すると、条件が証明書で書かれるようになる:
+
+```sh
+$ codesign -d -r- /Applications/LR.app
+designated => identifier "com.finalize.lr" and certificate root = H"7146da…"
+```
+
+ハッシュを参照していない。実際、中身を変えて2回ビルドすると:
+
+```
+CDHash      9e242996… → a39fd3e9…   変わる
+requirement 同一                     変わらない
+```
+
+Apple Developer への登録は要らない。信頼設定（GUI の認証が必要）も要らない。
+`security find-identity` が `CSSMERR_TP_NOT_TRUSTED` と言っても、codesign は
+信頼されていない自己署名の identity で問題なく署名できる。
+
+別のマシンで `make-cert.sh` を走らせると別の証明書になるので、そのときは
+許可を一度だけ与え直す。
+
+#### それでも動かないとき
+
+本当に効いているかは tccd のログで分かる:
+
+```sh
+log show --last 10m --predicate 'process == "tccd"' --style compact | grep -i "com.finalize.lr"
 ```
 
 ```
 Failed to match existing code requirement for subject com.finalize.lr
-and service kTCCServiceAccessibility     ← これが出ていたら記録が古い
+and service kTCCServiceAccessibility     ← 記録が古い
 ```
-
-直し方は記録を消して与え直すこと。`./install.sh` が毎回これをやっている。
 
 ```sh
-tccutil reset Accessibility com.finalize.lr
+tccutil reset Accessibility com.finalize.lr    # 消して与え直す
 ```
-
-**根本的に止めるには、署名を安定させる。** Xcode > Settings > Accounts で Apple ID を
-追加すると（無料。有料の Developer Program は要らない）「Apple Development」証明書が
-作られる。プロジェクトの `CODE_SIGN_STYLE` を `Automatic` にして `DEVELOPMENT_TEAM` を
-設定すれば、TCC の条件がハッシュではなくチーム ID で書かれるようになり、
-ビルドし直しても許可が外れなくなる。
 
 ## アイコン
 

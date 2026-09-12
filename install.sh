@@ -19,23 +19,27 @@ rm -rf ~/Applications/LR.app
 rm -rf /Applications/LR.app
 cp -R build/Build/Products/Release/LR.app /Applications/LR.app
 
-# アクセシビリティの記録を消してから起動する。
+# ad-hoc 署名のときだけ、アクセシビリティの記録を消す。
 #
-# ad-hoc 署名には証明書チェーンが無いので、TCC は「このアプリか」を
-# バイナリのハッシュ（cdhash）で固定する。ビルドし直すとハッシュが変わり、
-# 記録と一致しなくなる。このとき tccd はこう言う:
+# ad-hoc には証明書チェーンが無いので、TCC は許可の条件をバイナリのハッシュで
+# 固定する。再ビルドすると一致しなくなるのに、システム設定のスイッチは ON のまま
+# 残る。「許可済みに見えるのに一切動かない」という一番分かりにくい壊れ方をする。
+# 与え直す手間より、嘘の ON が残る方が高くつくので消してしまう。
 #
-#   Failed to match existing code requirement for subject com.finalize.lr
-#
-# 厄介なのは、システム設定のスイッチは ON のまま残ることだ。画面上は許可済みに
-# 見えるのに一切動かない、という一番分かりにくい状態になる。だから毎回消す。
-# 許可を与え直す手間より、嘘の ON が残る方が高くつく。
-tccutil reset Accessibility com.finalize.lr >/dev/null 2>&1 || true
+# 証明書（Cert/make-cert.sh）で署名していればこの問題は起きない。条件が
+# ハッシュではなく証明書で書かれるので、何度ビルドしても許可が残る。
+if codesign -dvv /Applications/LR.app 2>&1 | grep -q "Signature=adhoc"; then
+  tccutil reset Accessibility com.finalize.lr >/dev/null 2>&1 || true
+  adhoc=yes
+fi
 
 open /Applications/LR.app
 
 echo "起動した: /Applications/LR.app"
-echo
-echo "アクセシビリティの許可を消したので、与え直しが必要:"
-echo "  ダイアログの「システム設定を開く」→ 一覧の LR をオン"
+if [ "$adhoc" = yes ]; then
+  echo
+  echo "ad-hoc 署名なので許可の記録を消した。与え直しが必要:"
+  echo "  ダイアログの「システム設定を開く」→ 一覧の LR をオン"
+  echo "  毎回これをやりたくなければ ./Cert/make-cert.sh"
+fi
 echo "ログ: log show --last 2m --predicate 'subsystem == \"com.finalize.lr\"' --style compact"
