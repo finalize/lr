@@ -61,8 +61,13 @@ final class AppModel {
     private var ascii: InputSource?
     private var kana: InputSource?
     private var trustTimer: Timer?
-    /// 許可の状態を一度でも記録したか。起動直後の状態を必ず1行残すために使う。
-    private var didLogTrust = false
+    /// 許可の状態を一度でも見たか。
+    ///
+    /// 起動直後の1回だけやりたいことが2つある。状態をログに必ず1行残すことと、
+    /// 許可が無ければダイアログを出すこと。どちらも「初回かどうか」で決まるので
+    /// このフラグ1つで見ているが、名前はログ側に寄せない（実際そう書いていて、
+    /// ダイアログが出る条件がログ用の名前の裏に隠れていた）。
+    private var hasCheckedTrust = false
 
     init() {
         isSwapped = UserDefaults.standard.bool(forKey: Self.swapKey)
@@ -141,10 +146,13 @@ final class AppModel {
     /// 用意されていない。なので下りるまで1秒ごとに見に行き、下りたらタイマーを止める。
     private func updateTrust() {
         let trusted = AXIsProcessTrusted()
-        let isFirstCheck = !didLogTrust
+        let isFirstCheck = !hasCheckedTrust
+        hasCheckedTrust = true
+
+        // 起動直後は必ず1行残す。ログが出ないことと許可が無いことを区別できないと、
+        // 動かないときに何も分からなくなる。
         if trusted != isTrusted || isFirstCheck {
             log.notice("アクセシビリティ許可: \(trusted ? "あり" : "なし", privacy: .public)")
-            didLogTrust = true
             isTrusted = trusted
         }
 
@@ -197,10 +205,12 @@ final class AppModel {
         guard let current = InputSource.current else { return }
         // ID の一致ではなく「日本語を扱う入力モードか」で見る。ことえりでも
         // 他の IME でも同じ判定で通る。
-        let kana = current.type == (kTISTypeKeyboardInputMode as String)
+        // 変数名を kana にしないこと。プロパティの `kana`（InputSource?）を
+        // この関数の中だけ Bool で隠してしまう。Swift は警告を出さない。
+        let nowKana = current.type == (kTISTypeKeyboardInputMode as String)
             && current.languages.contains("ja")
         // 同じ値でも代入すると @Observable は変化として扱い、View を描き直させる。
         // この通知は何度も届くので、変わったときだけ書く。
-        if kana != isKana { isKana = kana }
+        if nowKana != isKana { isKana = nowKana }
     }
 }

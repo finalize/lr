@@ -37,8 +37,6 @@ final class CommandKeyWatcher {
     /// 単独押しではないと分かったか。
     private var cancelled = false
 
-    var isRunning: Bool { monitor != nil }
-
     /// 監視を始める。
     ///
     /// 大事な注意: アクセシビリティの許可が無いとき、この呼び出しは **失敗しない**。
@@ -64,12 +62,6 @@ final class CommandKeyWatcher {
             self?.process(event)
         }
         log.notice("監視を開始した (登録できた=\(self.monitor != nil, privacy: .public))")
-    }
-
-    func stop() {
-        if let monitor { NSEvent.removeMonitor(monitor) }
-        monitor = nil
-        reset()
     }
 
     private func reset() {
