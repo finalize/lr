@@ -8,3 +8,6 @@ xcuserdata/
 
 # macOS
 .DS_Store
+
+# 配布用の zip（release.sh）
+dist/
