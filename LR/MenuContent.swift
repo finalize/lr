@@ -35,9 +35,42 @@ struct MenuContent: View {
 
         Divider()
 
+        // `Menu` はメニューの中の入れ子（サブメニュー）になる。
+        Menu("ウィンドウ") {
+            ForEach(Self.windowGroups, id: \.self) { group in
+                ForEach(group, id: \.self) { action in
+                    Button(action.title) { model.arrange(action) }
+                        // ショートカットを登録しているときだけ、右側にキーを出す。
+                        // 切っているのに出すと、押せば効くように見えてしまう。
+                        .keyboardShortcut(model.arrangesWindows ? action.keyboardShortcut : nil)
+                }
+                Divider()
+            }
+            Toggle("ショートカットで動かす", isOn: $model.arrangesWindows)
+            Toggle("ドラッグで端に寄せて並べる", isOn: $model.snapsWindows)
+        }
+
+        Divider()
+
         Button("LR を終了") {
             NSApplication.shared.terminate(nil)
         }
         .keyboardShortcut("q")
+    }
+
+    /// ウィンドウのメニューに並べる順と、区切り線の入れ方。
+    private static let windowGroups: [[WindowAction]] = [
+        [.leftHalf, .rightHalf, .topHalf, .bottomHalf],
+        [.topLeft, .topRight, .bottomLeft, .bottomRight],
+        [.firstThird, .centerThird, .lastThird, .firstTwoThirds, .centerTwoThirds, .lastTwoThirds],
+        [.maximize, .maximizeHeight, .center, .larger, .smaller, .restore],
+        [.previousDisplay, .nextDisplay],
+    ]
+}
+
+private extension WindowAction {
+    /// メニューの項目の右に出すキー。
+    var keyboardShortcut: KeyboardShortcut {
+        KeyboardShortcut(shortcut.key, modifiers: shortcut.modifiers)
     }
 }
