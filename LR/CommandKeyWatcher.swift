@@ -30,6 +30,7 @@ final class CommandKeyWatcher {
     }
 
     private var monitor: Any?
+    private var localMonitor: Any?
     /// いま押されている ⌘。両手で同時に押される場合があるので集合で持つ。
     private var pressed: Set<CommandSide> = []
     /// 単独押しの候補。押し始めに決まり、離したときに使う。
@@ -60,6 +61,14 @@ final class CommandKeyWatcher {
         // self を強く持つと、どちらも解放されなくなる。
         monitor = NSEvent.addGlobalMonitorForEvents(matching: mask) { [weak self] event in
             self?.process(event)
+        }
+        // グローバルモニタには、LR 自身に届いたイベントは来ない。鏡の窓はフォーカスを
+        // 奪わずにキーになる（Esc を受けるため）ので、開いている間の打鍵は LR に届く。
+        // そちらも同じ判定に流す。1つのイベントはどちらか片方にしか来ないので、
+        // 二重には数えない。イベントはそのまま返して、止めない。
+        localMonitor = NSEvent.addLocalMonitorForEvents(matching: mask) { [weak self] event in
+            self?.process(event)
+            return event
         }
         log.notice("監視を開始した (登録できた=\(self.monitor != nil, privacy: .public))")
     }

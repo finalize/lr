@@ -19,12 +19,16 @@ struct LRApp: App {
     /// この中のプロパティを読んだ画面だけが、そのプロパティの変化で描き直される。
     @State private var model = AppModel()
 
+    /// 鏡（ノッチのクリックで出るカメラの映像）の状態。`AppModel` と分けてある理由は
+    /// `MirrorModel` の注釈に書いた。
+    @State private var mirror = MirrorModel()
+
     /// `some Scene` は「Scene プロトコルを満たす何らかの型」。
     /// 具体的な型名を書かなくていい（TypeScript のジェネリクス推論に近い）。
     var body: some Scene {
         MenuBarExtra {
             // ここが「クリックしたときに開くメニュー」の中身。
-            MenuContent(model: model)
+            MenuContent(model: model, mirror: mirror)
         } label: {
             // ここが「メニューバーに出る見た目」。
             //

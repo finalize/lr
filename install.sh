@@ -33,7 +33,7 @@ fi
 xcodebuild -project LR.xcodeproj -scheme LR -configuration Release \
   -derivedDataPath build -quiet build
 
-# アクセシビリティの記録を捨てるべきか、入れ替える前に決める。
+# アクセシビリティとカメラの許可の記録を捨てるべきか、入れ替える前に決める。
 #
 # TCC は「このアプリか」を designated requirement で判定する。ここが今までと
 # 変わると、記録は残っているのに一致しなくなり、tccd がこう言う:
@@ -60,7 +60,9 @@ rm -rf "$APP"
 cp -R "$BUILT" "$APP"
 
 if [ -n "$old_req" ] && [ "$old_req" != "$new_req" ]; then
+  # カメラも同じ壊れ方をする。スイッチは ON のまま、鏡が「許可されていません」になる。
   tccutil reset Accessibility "$BUNDLE_ID" >/dev/null 2>&1 || true
+  tccutil reset Camera "$BUNDLE_ID" >/dev/null 2>&1 || true
   regrant=yes
 fi
 
@@ -71,6 +73,7 @@ if [ "$regrant" = yes ]; then
   echo
   echo "署名の条件が前回と変わったので、許可の記録を消した。与え直しが必要:"
   echo "  ダイアログの「システム設定を開く」→ 一覧の LR をオン"
+  echo "  カメラは、次に鏡を開いたときに出るダイアログで許可する"
   echo
   echo "  前回: $old_req"
   echo "  今回: $new_req"

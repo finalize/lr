@@ -1,6 +1,7 @@
 import AppKit
 import ApplicationServices
 import Carbon
+import ServiceManagement
 
 /// アプリ全体の状態と、状態を変える手続きをまとめた置き場。
 ///
@@ -72,6 +73,26 @@ final class AppModel {
             guard snapsWindows != oldValue else { return }
             UserDefaults.standard.set(snapsWindows, forKey: Self.snapsWindowsKey)
             updateSnapping()
+        }
+    }
+
+    /// ログイン時に起動するか。
+    ///
+    /// 値を UserDefaults に持たず、毎回 `SMAppService` に聞く。システム設定の
+    /// 「ログイン項目」側で外されることがあるから。
+    ///
+    /// 自分で持っていない値なので、`@Observable` は変わったことに気づけない。
+    /// 「読んだ」「変えた」を `access` / `withMutation` で手で伝える。どちらも
+    /// `@Observable` がこの class に足しているもので、ふつうのプロパティなら裏で呼ばれている。
+    var launchesAtLogin: Bool {
+        get {
+            access(keyPath: \.launchesAtLogin)
+            return SMAppService.mainApp.status == .enabled
+        }
+        set {
+            withMutation(keyPath: \.launchesAtLogin) {
+                setLaunchesAtLogin(newValue)
+            }
         }
     }
 
@@ -264,6 +285,30 @@ final class AppModel {
         // 同じ値でも代入すると @Observable は変化として扱い、View を描き直させる。
         // この通知は何度も届くので、変わったときだけ書く。
         if nowKana != isKana { isKana = nowKana }
+    }
+
+    // MARK: - ログイン項目
+
+    /// ログイン項目に入れる・外す。
+    ///
+    /// アプリの置き場所ごと登録される。`/Applications/LR.app` から起動したものでやること
+    /// （DerivedData の中のものを登録すると、ビルドし直したときに迷子になる）。
+    private func setLaunchesAtLogin(_ on: Bool) {
+        let service = SMAppService.mainApp
+        do {
+            if on {
+                try service.register()
+            } else {
+                try service.unregister()
+            }
+            log.notice("ログイン時に起動: \(String(describing: service.status), privacy: .public)")
+        } catch {
+            log.error("ログイン項目を変えられなかった: \(error.localizedDescription, privacy: .public)")
+        }
+        // システム設定で「許可」を押すまで入らない場合がある。そのときは設定を開いて見せる。
+        if service.status == .requiresApproval {
+            SMAppService.openSystemSettingsLoginItems()
+        }
     }
 
     // MARK: - ウィンドウ
