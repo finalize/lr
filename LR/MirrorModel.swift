@@ -1,11 +1,12 @@
 import AppKit
 import AVFoundation
 
-/// 鏡（ノッチのクリックで出る、カメラの映像の窓）の部品をつなぎ、メニューに状態を見せる。
+/// 鏡（ノッチのクリックで出る、カメラの映像の窓）の部品をつなぎ、メニューと設定の窓に状態を見せる。
 ///
 /// 元は Kagami という別のアプリだった。カメラ・ノッチ・鏡の窓はそのまま持ってきて、
 /// Kagami の AppDelegate がしていた「部品をつなぐ」と「メニュー」をここに移した。
-/// Kagami にあったメニューバーのアイコンは持ってきていない。鏡は LR のメニューから開く。
+/// Kagami にあったメニューバーのアイコンは持ってきていない。鏡は LR のメニューから開き、
+/// 設定は LR の設定の窓（`SettingsView` の「鏡」タブ）で変える。
 ///
 /// `AppModel` に混ぜずに分けたのは、部品がどれも `@MainActor`（メインスレッドでだけ触る、
 /// という印）で書かれているから。印の無い `AppModel` の init からは作れない。
@@ -21,11 +22,11 @@ final class MirrorModel {
     /// 下の値はどれもこの class が自分では持たず、読まれるたびに本当の持ち主
     /// （UserDefaults・カメラ・窓）に聞く。ところが `@Observable` が追えるのは、
     /// この class が自分で持っているプロパティだけで、持ち主の側で値が変わっても
-    /// メニューは古いまま残る。
+    /// メニューや設定の窓は古いまま残る。
     ///
     /// そこで、どの値も読む前にこれを読み（`read`）、何か変わったらこれを進める（`bump`）。
-    /// SwiftUI は「revision を読んだ」と覚えるので、進めればメニューが描き直される。
-    /// 値ごとに見分けずに全部まとめて描き直させるが、メニューの項目が十数個なので気にしない。
+    /// SwiftUI は「revision を読んだ」と覚えるので、進めれば描き直される。
+    /// 値ごとに見分けずに全部まとめて描き直させるが、項目が十個ほどなので気にしない。
     private var revision = 0
 
     private enum Keys {
@@ -127,12 +128,12 @@ final class MirrorModel {
 
     // MARK: - 出す・隠す
 
-    /// メニューから出し入れする。
+    /// メニューや設定の窓から出し入れする。窓はマウスの真下（の画面の上端）に出す。
     ///
-    /// 窓はマウスの真下に出す。メニューはメニューバーの ⌘ のすぐ下に開くので、項目を
-    /// 押したときのマウスはだいたいアイコンの下にある。`MenuBarExtra` はアイコンの位置を
-    /// 教えてくれないので、これで代える。
-    func toggleFromMenu() {
+    /// メニューはメニューバーの ⌘ のすぐ下に開くので、項目を押したときのマウスは
+    /// だいたいアイコンの下にある。`MenuBarExtra` はアイコンの位置を教えてくれないので、
+    /// これで代える。
+    func toggleUnderMouse() {
         let point = NSEvent.mouseLocation
         guard let screen = NSScreen.screens.first(where: { $0.frame.contains(point) }) ?? NSScreen.main else { return }
         controller.toggle(at: .init(midX: point.x, screen: screen))
@@ -142,7 +143,7 @@ final class MirrorModel {
 
     /// 開くたびに作り直す。カメラの抜き差しや画質の対応は、開いた時点のものを出したい。
     ///
-    /// LR のメニュー（`MenuContent`）の「鏡」と同じ項目を、AppKit の `NSMenu` で組み直している。
+    /// 設定の窓の「鏡」タブ（`SettingsView`）と同じ項目を、AppKit の `NSMenu` で組み直している。
     /// SwiftUI で書いたメニューを NSView の右クリックに渡す道（`NSHostingMenu`）は
     /// macOS 15 からで、LR は 14 でも動かしたい。
     private func makeMenu() -> NSMenu {

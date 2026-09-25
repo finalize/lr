@@ -6,7 +6,8 @@ import SwiftUI
 /// 本体は書かない。`App` プロトコルの `body` に「どんな画面を持つか」を宣言すると、
 /// SwiftUI が裏で NSApplication を組み立てて実行してくれる。
 ///
-/// ここでは `WindowGroup`（通常のウィンドウ）を一切持たず、`MenuBarExtra` だけを置く。
+/// ここでは `WindowGroup`（通常のウィンドウ）を一切持たず、`MenuBarExtra` と
+/// 設定の窓（`Settings`）だけを置く。
 /// これと Info.plist の `LSUIElement = YES`（プロジェクト設定の
 /// `INFOPLIST_KEY_LSUIElement`）が揃うと、Dock にも ⌘Tab にも出てこない、
 /// メニューバーだけのアプリになる。
@@ -41,6 +42,14 @@ struct LRApp: App {
             } else {
                 Image(systemName: "command")
             }
+        }
+
+        // メニューの「設定…」で開く窓。機能ごとのタブは SettingsView に書いてある。
+        //
+        // `Settings` は macOS のアプリの設定の窓を作るための Scene。開く・閉じる・
+        // 前に開いていたら同じ窓を前に出す、を SwiftUI が面倒を見る。
+        Settings {
+            SettingsView(model: model, mirror: mirror)
         }
     }
 }
