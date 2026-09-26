@@ -1,12 +1,12 @@
 import CoreGraphics
 import Foundation
 
-// ウィンドウ配置の計算（LR/WindowLayout.swift・LR/WindowHistory.swift）を確かめる。
+// ウィンドウ配置の計算（One/WindowLayout.swift・One/WindowHistory.swift）を確かめる。
 //
 // 画面もウィンドウも使わない。配置は枠（CGRect）と画面の並び（ScreenArea）だけで決まるので、
 // 画面を自分で組み立てて渡せば、ディスプレイが1枚の機械でも縦長の画面や2段の並びを試せる。
 //
-// 実装は読まずに、仕様（「LR のウィンドウ配置 — 決めごと」）だけを見て書いた。
+// 実装は読まずに、仕様（「One のウィンドウ配置 — 決めごと」）だけを見て書いた。
 // 期待値は仕様の例の数値か、仕様の規則から手で計算した値。実装の出力を写した値は無い。
 // 奇数の幅や 3 で割り切れない幅は、仕様の境目の式（specBorder）で計算した値と照らす。
 
@@ -911,11 +911,11 @@ struct WindowLayoutTests {
         h.recordMove(of: "safari", from: first, to: leftHalf)
         check("初めて動かしたら戻す先は動かす前の位置", h.restoreFrame(for: "safari"), first)
 
-        // ここが設計の判断。LR で続けて動かしても、最初の位置に戻れる。
+        // ここが設計の判断。One で続けて動かしても、最初の位置に戻れる。
         h = WindowHistory<String>()
         h.recordMove(of: "safari", from: first, to: leftHalf)
         h.recordMove(of: "safari", from: leftHalf, to: rightHalf)
-        check("LR で続けて動かしたら戻す先は最初の位置のまま", h.restoreFrame(for: "safari"), first)
+        check("One で続けて動かしたら戻す先は最初の位置のまま", h.restoreFrame(for: "safari"), first)
         h.recordMove(of: "safari", from: rightHalf, to: leftHalf)
         check("3回続けても最初の位置のまま", h.restoreFrame(for: "safari"), first)
 
@@ -941,7 +941,7 @@ struct WindowLayoutTests {
         h = WindowHistory<String>()
         h.recordMove(of: "safari", from: first, to: leftHalf)
         h.recordMove(of: "safari", from: byHand, to: rightHalf)
-        check("手で動かしてから LR で動かしたら戻す先は手で置いた位置", h.restoreFrame(for: "safari"), byHand)
+        check("手で動かしてから One で動かしたら戻す先は手で置いた位置", h.restoreFrame(for: "safari"), byHand)
         h.recordMove(of: "safari", from: rightHalf, to: leftHalf)
         check("手で置いた位置から続けて動かしても戻す先は手で置いた位置", h.restoreFrame(for: "safari"), byHand)
 

@@ -35,7 +35,7 @@ final class Camera {
     /// 何が出るかはカメラ次第なので、メニューに実際の値を出して確かめられるようにする。
     private(set) var activeResolution: String?
 
-    private let queue = DispatchQueue(label: "com.finalize.lr.camera")
+    private let queue = DispatchQueue(label: "com.finalize.one.camera")
 
     /// 内蔵・外付け・iPhone（連係カメラ）を拾う。
     ///

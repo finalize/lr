@@ -2,7 +2,7 @@ import SwiftUI
 
 /// 設定の窓。機能ごとにタブを分ける。
 ///
-/// `LRApp` の `Settings` シーンの中身。macOS では `Settings` の中に `TabView` を置くと、
+/// `OneApp` の `Settings` シーンの中身。macOS では `Settings` の中に `TabView` を置くと、
 /// 窓の上にアイコン付きのタブが並ぶ、システム設定の各アプリでおなじみの形になる。
 /// タブごとに高さが違ってよく、切り替えると窓の高さが中身に合わせて伸び縮みする。
 ///
@@ -142,7 +142,7 @@ private struct MirrorSettings: View {
                 }
             }
 
-            // この窓は LR の窓なので、ここを押しても鏡は閉じない（外のクリックにならない）。
+            // この窓は One の窓なので、ここを押しても鏡は閉じない（外のクリックにならない）。
             // 鏡を出したまま上の設定を変えると、映りがその場で変わる。
             Button(mirror.isVisible ? "鏡を隠す" : "鏡を出して確かめる") { mirror.toggleUnderMouse() }
         }

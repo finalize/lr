@@ -6,7 +6,7 @@
 set -e
 cd "$(dirname "$0")/.."
 
-out=LR/Assets.xcassets/AppIcon.appiconset
+out=One/Assets.xcassets/AppIcon.appiconset
 color=${1:-white}      # white | dark
 weight=${2:-bold}      # medium | semibold | bold | heavy
 

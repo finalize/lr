@@ -7,13 +7,13 @@
 	objects = {
 
 /* Begin PBXFileReference section */
-		A1B2C3D40000000000000006 /* LR.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = LR.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		A1B2C3D40000000000000006 /* One.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = One.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
-		A1B2C3D40000000000000003 /* LR */ = {
+		A1B2C3D40000000000000003 /* One */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
-			path = LR;
+			path = One;
 			sourceTree = "<group>";
 		};
 /* End PBXFileSystemSynchronizedRootGroup section */
@@ -32,7 +32,7 @@
 		A1B2C3D40000000000000004 = {
 			isa = PBXGroup;
 			children = (
-				A1B2C3D40000000000000003 /* LR */,
+				A1B2C3D40000000000000003 /* One */,
 				A1B2C3D40000000000000005 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -40,7 +40,7 @@
 		A1B2C3D40000000000000005 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				A1B2C3D40000000000000006 /* LR.app */,
+				A1B2C3D40000000000000006 /* One.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -48,9 +48,9 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		A1B2C3D40000000000000002 /* LR */ = {
+		A1B2C3D40000000000000002 /* One */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = A1B2C3D4000000000000000B /* Build configuration list for PBXNativeTarget "LR" */;
+			buildConfigurationList = A1B2C3D4000000000000000B /* Build configuration list for PBXNativeTarget "One" */;
 			buildPhases = (
 				A1B2C3D40000000000000007 /* Sources */,
 				A1B2C3D40000000000000008 /* Frameworks */,
@@ -61,13 +61,13 @@
 			dependencies = (
 			);
 			fileSystemSynchronizedGroups = (
-				A1B2C3D40000000000000003 /* LR */,
+				A1B2C3D40000000000000003 /* One */,
 			);
-			name = LR;
+			name = One;
 			packageProductDependencies = (
 			);
-			productName = LR;
-			productReference = A1B2C3D40000000000000006 /* LR.app */;
+			productName = One;
+			productReference = A1B2C3D40000000000000006 /* One.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -85,7 +85,7 @@
 					};
 				};
 			};
-			buildConfigurationList = A1B2C3D4000000000000000A /* Build configuration list for PBXProject "LR" */;
+			buildConfigurationList = A1B2C3D4000000000000000A /* Build configuration list for PBXProject "One" */;
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
@@ -99,7 +99,7 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				A1B2C3D40000000000000002 /* LR */,
+				A1B2C3D40000000000000002 /* One */,
 			);
 		};
 /* End PBXProject section */
@@ -197,7 +197,7 @@
 					"@executable_path/../Frameworks",
 				);
 				MARKETING_VERSION = 0.5.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.finalize.lr;
+				PRODUCT_BUNDLE_IDENTIFIER = com.finalize.one;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_EMIT_LOC_STRINGS = YES;
@@ -225,7 +225,7 @@
 					"@executable_path/../Frameworks",
 				);
 				MARKETING_VERSION = 0.5.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.finalize.lr;
+				PRODUCT_BUNDLE_IDENTIFIER = com.finalize.one;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_EMIT_LOC_STRINGS = YES;
@@ -236,7 +236,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		A1B2C3D4000000000000000A /* Build configuration list for PBXProject "LR" */ = {
+		A1B2C3D4000000000000000A /* Build configuration list for PBXProject "One" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				A1B2C3D4000000000000000C /* Debug */,
@@ -245,7 +245,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		A1B2C3D4000000000000000B /* Build configuration list for PBXNativeTarget "LR" */ = {
+		A1B2C3D4000000000000000B /* Build configuration list for PBXNativeTarget "One" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				A1B2C3D4000000000000000E /* Debug */,

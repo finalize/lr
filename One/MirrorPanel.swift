@@ -7,7 +7,7 @@ import Carbon.HIToolbox
 /// `NSPopover` にしなかったのは、ポップオーバーはユーザーが端を掴んで大きさを変えられないから。
 /// 代わりに、フォーカスを奪わないパネルを使う:
 ///
-/// - `.nonactivatingPanel` … 開いても LR が前面のアプリにならない。ビデオ会議のアプリを
+/// - `.nonactivatingPanel` … 開いても One が前面のアプリにならない。ビデオ会議のアプリを
 ///   前面に置いたまま、自分の顔だけ確かめられる。Spotlight の窓と同じ種類
 /// - `.titled` + 透明なタイトルバー … 見た目は枠無しだが、角丸・影・端を掴んでのリサイズは
 ///   普通の窓のものがそのまま使える。`.borderless` にするとリサイズが効かない
@@ -29,7 +29,7 @@ final class MirrorPanel: NSPanel {
         level = .floating
         // どのデスクトップにいても、全画面のビデオ会議の上にも出す。
         collectionBehavior = [.canJoinAllSpaces, .fullScreenAuxiliary]
-        // NSPanel は既定で「アプリが後ろに回ったら隠れる」。隠すのは LR が決める
+        // NSPanel は既定で「アプリが後ろに回ったら隠れる」。隠すのは One が決める
         // （隠すときにカメラも止めたい）ので切っておく。
         hidesOnDeactivate = false
         isReleasedWhenClosed = false
@@ -50,7 +50,7 @@ final class MirrorPanel: NSPanel {
         }
     }
 
-    /// LR はメニューバーだけのアプリで、⌘W を「窓を閉じる」につなぐメニューを当てにできない。
+    /// One はメニューバーだけのアプリで、⌘W を「窓を閉じる」につなぐメニューを当てにできない。
     /// ここで拾い、Esc と同じくカメラも止める道を通す。
     override func performKeyEquivalent(with event: NSEvent) -> Bool {
         let flags = event.modifierFlags.intersection(.deviceIndependentFlagsMask)
@@ -138,7 +138,7 @@ final class MirrorController: NSObject {
 
     /// 出した・隠した、カメラの状態や画質が変わった、のどれかで呼ばれる。
     ///
-    /// LR のメニューと設定の窓は SwiftUI で書いてあり、ここの値の変化を自分では追えない。
+    /// One のメニューと設定の窓は SwiftUI で書いてあり、ここの値の変化を自分では追えない。
     /// これを合図に描き直させる（`MirrorModel`）。
     var onChange: (() -> Void)?
 
@@ -244,7 +244,7 @@ final class MirrorController: NSObject {
             visibleFrame: anchor.screen.visibleFrame
         )
         panel.setFrame(frame, display: false)
-        // LR は前面のアプリではないので、makeKeyAndOrderFront だけだと
+        // One は前面のアプリではないので、makeKeyAndOrderFront だけだと
         // 他のアプリの窓の後ろに出ることがある。前に出してからキーにする（Esc を受けるため）。
         panel.orderFrontRegardless()
         panel.makeKey()
@@ -268,10 +268,10 @@ final class MirrorController: NSObject {
     /// クリックしたときに「閉じた直後にトグルでまた開く」が起きやすい。
     ///
     /// グローバルモニタは **他のアプリ宛て**のクリックしか受け取らない。ノッチの小窓や
-    /// 鏡そのもの（右クリックのメニュー）は LR の窓なのでここに来ず、トグルとぶつからない。
+    /// 鏡そのもの（右クリックのメニュー）は One の窓なのでここに来ず、トグルとぶつからない。
     ///
-    /// ただしメニューバーの LR のアイコン（⌘）へのクリックは、LR のものなのにここに来る
-    /// （macOS 27 で確かめた）。なので LR のメニューを開くと鏡は閉じる。ほかの外のクリックと
+    /// ただしメニューバーの One のアイコン（⌘）へのクリックは、One のものなのにここに来る
+    /// （macOS 27 で確かめた）。なので One のメニューを開くと鏡は閉じる。ほかの外のクリックと
     /// 同じ扱いで困らないので、そのままにしてある。見ながら画質などを変えるなら鏡の上で右クリック。
     /// マウスのクリックを見るだけならアクセシビリティの許可は要らない。
     private func updateOutsideClickMonitor() {

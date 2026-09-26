@@ -10,9 +10,9 @@
 set -e
 cd "$(dirname "$0")"
 
-APP=/Applications/LR.app
-BUNDLE_ID=com.finalize.lr
-BUILT=build/Build/Products/Release/LR.app
+APP=/Applications/One.app
+BUNDLE_ID=com.finalize.one
+BUILT=build/Build/Products/Release/One.app
 
 # 署名に使う identity がこの端末に無ければ作る。
 #
@@ -30,7 +30,7 @@ if ! security find-identity -p codesigning 2>/dev/null | grep -q "LR Code Signin
   echo
 fi
 
-xcodebuild -project LR.xcodeproj -scheme LR -configuration Release \
+xcodebuild -project One.xcodeproj -scheme One -configuration Release \
   -derivedDataPath build -quiet build
 
 # アクセシビリティとカメラの許可の記録を捨てるべきか、入れ替える前に決める。
@@ -38,7 +38,7 @@ xcodebuild -project LR.xcodeproj -scheme LR -configuration Release \
 # TCC は「このアプリか」を designated requirement で判定する。ここが今までと
 # 変わると、記録は残っているのに一致しなくなり、tccd がこう言う:
 #
-#   Failed to match existing code requirement for subject com.finalize.lr
+#   Failed to match existing code requirement for subject com.finalize.one
 #
 # 厄介なのは、**システム設定のスイッチは ON のまま残る**ことだ。許可済みに
 # 見えるのに一切動かない、という一番分かりにくい壊れ方をする。スイッチを
@@ -54,8 +54,21 @@ req() { codesign -d -r- "$1" 2>/dev/null | grep '^designated' || true; }
 old_req=$(req "$APP")
 new_req=$(req "$BUILT")
 
-pkill -x LR 2>/dev/null || true
-rm -rf ~/Applications/LR.app        # 昔ここに置いていた分の掃除
+pkill -x One 2>/dev/null || true
+
+# 前の名前（LR、ID は com.finalize.lr）で入れていたものの後始末。
+#
+# 残っていると、⌘ の単独押しに2つが反応し、ショートカットも取り合う。ノッチの上にも
+# 透明な小窓が2枚重なる。ID が違うので許可の記録も別物で、もう使わないので消す。
+# ~/Applications は、もっと前にここへ置いていた分。
+if [ -d /Applications/LR.app ] || [ -d ~/Applications/LR.app ]; then
+  echo "前の名前の LR.app を止めて消す（One に名前を変えた）"
+  pkill -x LR 2>/dev/null || true
+  rm -rf /Applications/LR.app ~/Applications/LR.app
+  tccutil reset All com.finalize.lr >/dev/null 2>&1 || true
+  renamed=yes
+fi
+
 rm -rf "$APP"
 cp -R "$BUILT" "$APP"
 
@@ -72,7 +85,7 @@ echo "起動した: $APP"
 if [ "$regrant" = yes ]; then
   echo
   echo "署名の条件が前回と変わったので、許可の記録を消した。与え直しが必要:"
-  echo "  ダイアログの「システム設定を開く」→ 一覧の LR をオン"
+  echo "  ダイアログの「システム設定を開く」→ 一覧の One をオン"
   echo "  カメラは、次に鏡を開いたときに出るダイアログで許可する"
   echo
   echo "  前回: $old_req"
@@ -82,5 +95,12 @@ if [ "$regrant" = yes ]; then
               echo "  cdhash で条件が書かれている = ad-hoc 署名。毎回これが起きる。"
               echo "  ./Cert/make-cert.sh を一度走らせると起きなくなる。" ;;
   esac
+fi
+if [ "$renamed" = yes ]; then
+  echo
+  echo "ID が変わったので、許可も設定も One には引き継がれない。与え直しが必要:"
+  echo "  アクセシビリティ: ダイアログの「システム設定を開く」→ 一覧の One をオン"
+  echo "  カメラ: 次に鏡を開いたときに出るダイアログで許可する"
+  echo "  ログイン項目: システム設定に LR が残っていれば外し、One の設定の「一般」で入れ直す"
 fi
 echo "ログ: log show --last 2m --predicate 'subsystem == \"$BUNDLE_ID\"' --style compact"

@@ -11,7 +11,7 @@ struct MenuContent: View {
     let model: AppModel
     let mirror: MirrorModel
 
-    /// 設定の窓（`LRApp` の `Settings` シーン）を開く手続き。
+    /// 設定の窓（`OneApp` の `Settings` シーン）を開く手続き。
     ///
     /// `@Environment` は、SwiftUI が外から渡してくれる値を受け取る印。React の
     /// useContext に近い。`openSettings` は関数のように呼べる値になっている。
@@ -51,13 +51,13 @@ struct MenuContent: View {
         Divider()
 
         Button("設定…") {
-            // LR は Dock に出ないアプリで、ふだんは前面のアプリではない。前に出さないと、
+            // One は Dock に出ないアプリで、ふだんは前面のアプリではない。前に出さないと、
             // 設定の窓が他のアプリの窓の後ろに開く。
             NSApp.activate()
             openSettings()
         }
         .keyboardShortcut(",")
-        Button("LR を終了") {
+        Button("One を終了") {
             NSApplication.shared.terminate(nil)
         }
         .keyboardShortcut("q")

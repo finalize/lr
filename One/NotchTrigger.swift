@@ -23,8 +23,8 @@ final class NotchTrigger {
     /// ノッチの無い画面で試すための切り替え。
     ///
     /// ```sh
-    /// defaults write com.finalize.lr fakeNotch -bool true    # 入れる
-    /// defaults delete com.finalize.lr fakeNotch              # 戻す
+    /// defaults write com.finalize.one fakeNotch -bool true    # 入れる
+    /// defaults delete com.finalize.one fakeNotch              # 戻す
     /// ```
     ///
     /// メインの画面の上端中央（幅 200pt、メニューバーの高さ）に偽のノッチを置く。

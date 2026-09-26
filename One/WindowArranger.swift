@@ -92,14 +92,14 @@ final class WindowArranger {
 
     /// スナップしていたウィンドウを、ドラッグで引き剥がした。大きさだけ元に戻す。
     ///
-    /// LR が置いた場所から動かし始めたときだけ戻す。手で大きさを整えたウィンドウを
+    /// One が置いた場所から動かし始めたときだけ戻す。手で大きさを整えたウィンドウを
     /// 動かしただけで縮んだり広がったりしたら困る。
     ///
     /// 記録は消さない。ここで ⌃⌥⌫ を押せば、スナップする前の位置まで戻れる
     /// （位置も含めて戻すのは、大きさだけ戻す「引き剥がし」とは別の操作）。
     ///
     /// - Parameters:
-    ///   - initial: ドラッグを始める前の枠。LR が置いた枠と比べる
+    ///   - initial: ドラッグを始める前の枠。One が置いた枠と比べる
     ///   - current: 動き始めたところの枠
     func unsnap(_ window: AXWindow, initial: CGRect, current: CGRect, cursor: CGPoint) {
         guard let restore = history.restoreFrame(for: window.element, ifStillAt: initial) else { return }

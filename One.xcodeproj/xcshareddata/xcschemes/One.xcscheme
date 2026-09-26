@@ -6,9 +6,9 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "A1B2C3D40000000000000002"
-               BuildableName = "LR.app"
-               BlueprintName = "LR"
-               ReferencedContainer = "container:LR.xcodeproj">
+               BuildableName = "One.app"
+               BlueprintName = "One"
+               ReferencedContainer = "container:One.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -22,9 +22,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "A1B2C3D40000000000000002"
-            BuildableName = "LR.app"
-            BlueprintName = "LR"
-            ReferencedContainer = "container:LR.xcodeproj">
+            BuildableName = "One.app"
+            BlueprintName = "One"
+            ReferencedContainer = "container:One.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </LaunchAction>
@@ -33,9 +33,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "A1B2C3D40000000000000002"
-            BuildableName = "LR.app"
-            BlueprintName = "LR"
-            ReferencedContainer = "container:LR.xcodeproj">
+            BuildableName = "One.app"
+            BlueprintName = "One"
+            ReferencedContainer = "container:One.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </ProfileAction>

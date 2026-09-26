@@ -1,5 +1,5 @@
 #!/bin/sh
-# 配布用の zip を作る。dist/LR-<版>.zip に出る。
+# 配布用の zip を作る。dist/One-<版>.zip に出る。
 #
 # 受け取った人は Xcode も証明書も要らない。zip を解いて /Applications に置くだけ
 # （README の「zip から入れる」）。
@@ -10,7 +10,7 @@
 set -e
 cd "$(dirname "$0")"
 
-BUILT=build/Build/Products/Release/LR.app
+BUILT=build/Build/Products/Release/One.app
 
 # 配る版はいつも同じ証明書で署名する。
 #
@@ -31,13 +31,13 @@ if ! security find-identity -p codesigning 2>/dev/null | grep -q "LR Code Signin
 fi
 
 # README などは .app に入らないので、アプリの中身になるものだけを見る。
-if [ -n "$(git status --porcelain -- LR LR.xcodeproj 2>/dev/null)" ]; then
-  echo "注意: LR/ か LR.xcodeproj にコミットしていない変更がある。それも zip に入る。"
+if [ -n "$(git status --porcelain -- One One.xcodeproj 2>/dev/null)" ]; then
+  echo "注意: One/ か One.xcodeproj にコミットしていない変更がある。それも zip に入る。"
   echo
 fi
 
 # 前のビルドの残り物（消したはずの画像など）を持ち込まないよう、まっさらから作る。
-xcodebuild -project LR.xcodeproj -scheme LR -configuration Release \
+xcodebuild -project One.xcodeproj -scheme One -configuration Release \
   -derivedDataPath build -quiet clean build
 
 req=$(codesign -d -r- "$BUILT" 2>/dev/null | grep '^designated' || true)
@@ -54,12 +54,12 @@ case "$req" in
 esac
 
 version=$(/usr/libexec/PlistBuddy -c 'Print :CFBundleShortVersionString' "$BUILT/Contents/Info.plist")
-zip="dist/LR-$version.zip"
+zip="dist/One-$version.zip"
 
 # 拡張属性を zip に入れない。
 #
 # ビルドした .app のファイルには com.apple.provenance などの拡張属性が付いていて、
-# ditto は既定でこれを ._LR のような別のファイルにして zip に入れる。Finder で解けば
+# ditto は既定でこれを ._One のような別のファイルにして zip に入れる。Finder で解けば
 # 属性に戻るので害は無いが、unzip などで解くと .app の中に ._ のファイルが増えて
 # 署名が壊れる（a sealed resource is missing or invalid）。
 #
@@ -76,7 +76,7 @@ trap 'rm -rf "$check"' EXIT
 ditto -x -k "$zip" "$check/ditto"
 unzip -q "$zip" -d "$check/unzip"
 for how in ditto unzip; do
-  if ! codesign --verify --deep --strict "$check/$how/LR.app"; then
+  if ! codesign --verify --deep --strict "$check/$how/One.app"; then
     rm -f "$zip"
     echo "$how で解いた .app の署名が通らないので、zip を消して止めた。" >&2
     exit 1

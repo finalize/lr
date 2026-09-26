@@ -50,7 +50,7 @@ final class AppModel {
     /// ショートカット（⌃⌥← など）でウィンドウを動かすか。
     ///
     /// 既定は true。Rectangle のような他のウィンドウ整理アプリと一緒に使うときに、
-    /// LR 側だけ止められるようにしてある。メニューから選んで動かすのは、これを
+    /// One 側だけ止められるようにしてある。メニューから選んで動かすのは、これを
     /// 切っていてもできる。
     ///
     /// `@Observable` のクラスでは、init の中で代入しても `didSet` が走る（試して確かめた）。
@@ -187,13 +187,13 @@ final class AppModel {
 
     /// 許可を求めるダイアログを出す。
     ///
-    /// これを呼ぶと、macOS が「LR がコンピュータの制御を求めています」という
+    /// これを呼ぶと、macOS が「One がコンピュータの制御を求めています」という
     /// ダイアログを出し、**同時にアクセシビリティの一覧にこのアプリを登録する**。
     /// 登録さえされていれば、ユーザーはスイッチを入れるだけでよく、
     /// `.app` の場所を自分で探して「+」で追加する必要が無い。
     ///
     /// ダイアログはアプリごとに一度しか出ない。一度断られたあとに出したいときは
-    /// `tccutil reset Accessibility com.finalize.lr` で記録を消す。
+    /// `tccutil reset Accessibility com.finalize.one` で記録を消す。
     func promptForAccessibility() {
         // kAXTrustedCheckOptionPrompt は CFString の定数。Unmanaged で包まれて
         // いるので、いったん取り出してから辞書のキーとして使う。
@@ -291,7 +291,7 @@ final class AppModel {
 
     /// ログイン項目に入れる・外す。
     ///
-    /// アプリの置き場所ごと登録される。`/Applications/LR.app` から起動したものでやること
+    /// アプリの置き場所ごと登録される。`/Applications/One.app` から起動したものでやること
     /// （DerivedData の中のものを登録すると、ビルドし直したときに迷子になる）。
     private func setLaunchesAtLogin(_ on: Bool) {
         let service = SMAppService.mainApp

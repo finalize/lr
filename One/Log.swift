@@ -7,8 +7,8 @@ import os
 /// ターミナルで読み返せる。
 ///
 /// ```sh
-/// log show --last 5m --predicate 'subsystem == "com.finalize.lr"' --style compact
-/// log stream --predicate 'subsystem == "com.finalize.lr"'   # 流しながら見る
+/// log show --last 5m --predicate 'subsystem == "com.finalize.one"' --style compact
+/// log stream --predicate 'subsystem == "com.finalize.one"'   # 流しながら見る
 /// ```
 ///
 /// 使い分け:
@@ -22,6 +22,6 @@ import os
 /// `debug` は既定で無効なので、見たいときは明示的に有効にする:
 ///
 /// ```sh
-/// log stream --debug --predicate 'subsystem == "com.finalize.lr"'
+/// log stream --debug --predicate 'subsystem == "com.finalize.one"'
 /// ```
-let log = Logger(subsystem: "com.finalize.lr", category: "lr")
+let log = Logger(subsystem: "com.finalize.one", category: "one")

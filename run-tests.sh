@@ -18,10 +18,10 @@ cd "$(dirname "$0")"
 out=$(mktemp -d)
 trap 'rm -rf "$out"' EXIT
 
-swiftc -o "$out/watcher" LR/CommandKeyWatcher.swift LR/Log.swift Tests/WatcherTests.swift
-swiftc -o "$out/window" LR/WindowLayout.swift LR/WindowHistory.swift Tests/WindowLayoutTests.swift
-swiftc -o "$out/snap" LR/WindowLayout.swift LR/WindowHistory.swift LR/SnapLayout.swift Tests/SnapLayoutTests.swift
-swiftc -o "$out/mirror" LR/NotchGeometry.swift LR/PanelPlacement.swift LR/Quality.swift Tests/MirrorTests.swift
+swiftc -o "$out/watcher" One/CommandKeyWatcher.swift One/Log.swift Tests/WatcherTests.swift
+swiftc -o "$out/window" One/WindowLayout.swift One/WindowHistory.swift Tests/WindowLayoutTests.swift
+swiftc -o "$out/snap" One/WindowLayout.swift One/WindowHistory.swift One/SnapLayout.swift Tests/SnapLayoutTests.swift
+swiftc -o "$out/mirror" One/NotchGeometry.swift One/PanelPlacement.swift One/Quality.swift Tests/MirrorTests.swift
 
 # どれかが落ちても、ほかの結果も見えるように全部走らせてから終える。
 status=0

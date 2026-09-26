@@ -5,8 +5,8 @@ import AVFoundation
 ///
 /// 元は Kagami という別のアプリだった。カメラ・ノッチ・鏡の窓はそのまま持ってきて、
 /// Kagami の AppDelegate がしていた「部品をつなぐ」と「メニュー」をここに移した。
-/// Kagami にあったメニューバーのアイコンは持ってきていない。鏡は LR のメニューから開き、
-/// 設定は LR の設定の窓（`SettingsView` の「鏡」タブ）で変える。
+/// Kagami にあったメニューバーのアイコンは持ってきていない。鏡は One のメニューから開き、
+/// 設定は One の設定の窓（`SettingsView` の「鏡」タブ）で変える。
 ///
 /// `AppModel` に混ぜずに分けたのは、部品がどれも `@MainActor`（メインスレッドでだけ触る、
 /// という印）で書かれているから。印の無い `AppModel` の init からは作れない。
@@ -145,7 +145,7 @@ final class MirrorModel {
     ///
     /// 設定の窓の「鏡」タブ（`SettingsView`）と同じ項目を、AppKit の `NSMenu` で組み直している。
     /// SwiftUI で書いたメニューを NSView の右クリックに渡す道（`NSHostingMenu`）は
-    /// macOS 15 からで、LR は 14 でも動かしたい。
+    /// macOS 15 からで、One は 14 でも動かしたい。
     private func makeMenu() -> NSMenu {
         let menu = NSMenu()
         menu.autoenablesItems = false

@@ -1,14 +1,14 @@
 import CoreGraphics
 import Foundation
 
-// ドラッグでのスナップの判断（LR/SnapLayout.swift）と、それが使う座標の入れ替え（flipped）・
+// ドラッグでのスナップの判断（One/SnapLayout.swift）と、それが使う座標の入れ替え（flipped）・
 // 元に戻す先（WindowHistory.restoreFrame(for:ifStillAt:)）を確かめる。
 //
 // 画面もウィンドウもマウスも使わない。端の判定と行き先は点と画面の枠（ScreenArea）だけで決まり、
 // 1回のドラッグの追跡（SnapTracker）は、押す・動かす・離す・Esc を渡すと外で行うことの列を返すだけなので、
 // 画面を自分で組み立て、ウィンドウの枠を返す関数を偽物（呼ばれた回数を数える）にすれば、全部を1プロセスで試せる。
 //
-// 実装は読まずに、仕様（「LR のドラッグでのスナップ — 決めごと」）だけを見て書いた。
+// 実装は読まずに、仕様（「One のドラッグでのスナップ — 決めごと」）だけを見て書いた。
 // 期待値は仕様の例の数値か、仕様の規則から手で計算した値。実装の出力を写した値は無い。
 // 置く枠（leftHalf などの格子）は、前の仕様の境目の式 s + round(L × k / n) で手で計算した。
 
@@ -1239,8 +1239,8 @@ struct SnapLayoutTests {
         h = WindowHistory<String>()
         h.recordMove(of: "safari", from: first, to: leftHalf)
         h.recordMove(of: "safari", from: leftHalf, to: rightHalf)
-        check("戻す先: LR で続けて置いたなら、最後に置いた枠で最初の位置", h.restoreFrame(for: "safari", ifStillAt: rightHalf), first)
-        check("戻す先: LR で続けて置いたなら、前に置いた枠ではもう nil", h.restoreFrame(for: "safari", ifStillAt: leftHalf), nil)
+        check("戻す先: One で続けて置いたなら、最後に置いた枠で最初の位置", h.restoreFrame(for: "safari", ifStillAt: rightHalf), first)
+        check("戻す先: One で続けて置いたなら、前に置いた枠ではもう nil", h.restoreFrame(for: "safari", ifStillAt: leftHalf), nil)
 
         h = WindowHistory<String>()
         h.recordMove(of: "safari", from: first, to: leftHalf)
@@ -1265,7 +1265,7 @@ struct SnapLayoutTests {
         var h = WindowHistory<String>()
         h.recordMove(of: "w", from: a, to: b)
         h.recordMove(of: "w", from: b, to: c)
-        check("例: LR で A → B に置いたあと B からドラッグで C に置いたら、戻す先は A のまま", h.restoreFrame(for: "w"), a)
+        check("例: One で A → B に置いたあと B からドラッグで C に置いたら、戻す先は A のまま", h.restoreFrame(for: "w"), a)
 
         h = WindowHistory<String>()
         h.recordMove(of: "w", from: a, to: b)
@@ -1282,7 +1282,7 @@ struct SnapLayoutTests {
         for (snap, initial) in places(s.release(pt(2558, 700))) {
             if let placed = snap.frame { h.recordMove(of: "w", from: initial, to: placed) }
         }
-        check("place の initial を from に渡せば、LR で置いたウィンドウをドラッグで置き直しても戻す先は A",
+        check("place の initial を from に渡せば、One で置いたウィンドウをドラッグで置き直しても戻す先は A",
               h.restoreFrame(for: "w", ifStillAt: box(1707, 30, 853, 1346)), a)
     }
 }

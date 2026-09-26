@@ -10,7 +10,7 @@
 #
 # 証明書で署名すると、条件が証明書で書かれるようになる:
 #
-#   designated => identifier "com.finalize.lr" and certificate root = H"…"
+#   designated => identifier "com.finalize.one" and certificate root = H"…"
 #
 # ハッシュを参照していないので、何度ビルドしても許可が残る。
 #
@@ -21,6 +21,9 @@
 # 条件のハッシュが変わるので、アクセシビリティ許可を一度だけ与え直すこと。
 set -e
 
+# アプリの名前は LR から One に変えたが、証明書の名前は LR のころのまま。
+# 名前を変えるには作り直すしかなく、作り直すと配った版を受け取った人全員が
+# 許可を与え直すことになる（release.sh の CERT_ROOT）。名前は見た目だけなので残した。
 NAME="LR Code Signing"
 
 if security find-identity -p codesigning 2>/dev/null | grep -q "$NAME"; then

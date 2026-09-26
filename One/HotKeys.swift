@@ -5,7 +5,7 @@ import SwiftUI
 struct Shortcut {
     /// 押すキーの**物理的な位置**（Carbon の仮想キーコード `kVK_*`）。
     ///
-    /// 文字ではなく位置で決める。LR は入力ソースを切り替えるアプリなので、
+    /// 文字ではなく位置で決める。One は入力ソースを切り替えるアプリなので、
     /// 「U の文字が出るキー」で決めると、入力ソースによって効いたり効かなかったりしかねない。
     let keyCode: Int
     /// メニューに出す表記。
@@ -84,8 +84,8 @@ final class HotKeys {
     private var refs: [EventHotKeyRef] = []
     private var handler: EventHandlerRef?
 
-    /// LR が登録したショートカットだと分かるように付ける印。4文字を1つの数に詰めたもの（'LR  '）。
-    private static let signature: OSType = 0x4C52_2020
+    /// One が登録したショートカットだと分かるように付ける印。4文字を1つの数に詰めたもの（'One '）。
+    private static let signature: OSType = 0x4F6E_6520
 
     deinit {
         unregisterAll()
@@ -115,7 +115,7 @@ final class HotKeys {
         }
 
         // 他のアプリが同じキーを使っていても、登録そのものは成功する（Rectangle が動いて
-        // いる横で試して確かめた）。なので「失敗=0」は「このキーを LR だけが使っている」
+        // いる横で試して確かめた）。なので「失敗=0」は「このキーを One だけが使っている」
         // という意味ではない。
         log.notice("ウィンドウのショートカットを登録した 成功=\(self.refs.count, privacy: .public) 失敗=\(failed.count, privacy: .public)")
         if !failed.isEmpty {

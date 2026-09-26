@@ -5,7 +5,7 @@ import AppKit
 /// 見た目は Rectangle の既定に合わせた（黒の塗りに明るい灰色の縁、全体を 30% の濃さで）。
 /// 明るい壁紙でも暗い壁紙でも、下が透けたまま「ここに来る」が分かる。
 ///
-/// LR が自分で出す唯一のウィンドウ。クリックを受けず、キーも受けず、⌘Tab にも出ない。
+/// One が自分で出す唯一のウィンドウ。クリックを受けず、キーも受けず、⌘Tab にも出ない。
 /// 出ているあいだも、ドラッグしているウィンドウの操作を邪魔しない。
 final class SnapPreview {
     private let window: NSWindow
@@ -42,7 +42,7 @@ final class SnapPreview {
         // NSWindow の位置は AppKit の座標で渡す。
         guard let primary = NSScreen.screens.first else { return }
         window.setFrame(frame.flipped(primaryHeight: primary.frame.height), display: true)
-        // LR は手前のアプリにならない。手前のアプリかどうかに関わらず、同じ階層の
+        // One は手前のアプリにならない。手前のアプリかどうかに関わらず、同じ階層の
         // いちばん上に出す。キー入力の宛先は奪わない。
         window.orderFrontRegardless()
     }

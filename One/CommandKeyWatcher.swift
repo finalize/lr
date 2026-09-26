@@ -62,8 +62,8 @@ final class CommandKeyWatcher {
         monitor = NSEvent.addGlobalMonitorForEvents(matching: mask) { [weak self] event in
             self?.process(event)
         }
-        // グローバルモニタには、LR 自身に届いたイベントは来ない。鏡の窓はフォーカスを
-        // 奪わずにキーになる（Esc を受けるため）ので、開いている間の打鍵は LR に届く。
+        // グローバルモニタには、One 自身に届いたイベントは来ない。鏡の窓はフォーカスを
+        // 奪わずにキーになる（Esc を受けるため）ので、開いている間の打鍵は One に届く。
         // そちらも同じ判定に流す。1つのイベントはどちらか片方にしか来ないので、
         // 二重には数えない。イベントはそのまま返して、止めない。
         localMonitor = NSEvent.addLocalMonitorForEvents(matching: mask) { [weak self] event in

@@ -100,7 +100,7 @@ extension WindowAction {
     /// - Parameters:
     ///   - window: いまのウィンドウの枠
     ///   - screens: つながっている画面すべて。先頭が主画面
-    ///   - restore: 「元に戻す」の戻り先（LR が最初に動かす前の枠）
+    ///   - restore: 「元に戻す」の戻り先（One が最初に動かす前の枠）
     func target(for window: CGRect, screens: [ScreenArea], restore: CGRect?) -> CGRect? {
         guard let screen = ScreenArea.containing(window, in: screens) else { return nil }
         let area = screen.visible

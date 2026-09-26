@@ -5,7 +5,7 @@ import Carbon
 ///
 /// マウスのイベントを覗き、判断は `SnapTracker` に任せ、言われたことを行う。
 /// ⌘ の単独押しを見る `CommandKeyWatcher` と同じく、覗くだけでイベントは消さない。
-/// ドラッグそのものは macOS（とアプリ）がふつうに行い、LR は離した瞬間に置き直すだけ。
+/// ドラッグそのものは macOS（とアプリ）がふつうに行い、One は離した瞬間に置き直すだけ。
 final class DragSnapper {
     private let arranger: WindowArranger
     private let preview = SnapPreview()

@@ -12,7 +12,7 @@ import SwiftUI
 /// `INFOPLIST_KEY_LSUIElement`）が揃うと、Dock にも ⌘Tab にも出てこない、
 /// メニューバーだけのアプリになる。
 @main
-struct LRApp: App {
+struct OneApp: App {
     /// アプリが生きている間ずっと使う状態。
     ///
     /// `@State` は「この View が持ち主で、生存期間もこの View に合わせる」という印。
